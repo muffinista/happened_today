@@ -14,6 +14,7 @@ require 'tempfile'
 
 
 #debug_mode
+verbose
 
 # calling bot here kickstarts the initialization process
 bot
@@ -118,4 +119,7 @@ if ! media.nil?
 end
 
 puts "**** #{txt} #{opts.inspect}"
-tweet txt, opts unless txt.nil?
+unless txt.nil?
+  result = tweet txt, opts
+  puts result.inspect
+end
