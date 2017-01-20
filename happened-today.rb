@@ -35,6 +35,8 @@ def valid_url?(u)
 end
 
 def save_to_tempfile(url)
+  puts "LOAD #{url}"
+  
   uri = URI.parse(url)
   ext = [".", uri.path.split(/\./).last].join("")
 
@@ -55,6 +57,7 @@ def save_to_tempfile(url)
 end
 
 def filter_images(list)
+  puts list.inspect
   list.reject { |l| l =~ /.svg$/ || ! valid_url?(l) }
 end
 
@@ -107,9 +110,14 @@ if tmp.size > bot.config[:event_index]
 
     if media.nil?
       page = Wikipedia.find(l["title"])
-      
+      image_urls = []
+
       if page.image_urls && ! page.image_urls.empty?       
-        image_url = filter_images(page.image_urls).sample
+        image_urls = filter_images(page.image_urls)
+      end
+
+      if ! image_urls.empty?
+        image_url = image_urls.sample
         puts image_url
 
         media = File.new(save_to_tempfile(image_url))
