@@ -23,6 +23,17 @@ bot.config.delete(:db_uri)
 bot.config[:event_index] ||= 0
 bot.config[:date_index] ||= 0
 
+def valid_url?(u)
+  result = begin
+             URI.parse(u)
+             true
+           rescue StandardError => e
+             false
+           end
+
+  result
+end
+
 def save_to_tempfile(url)
   uri = URI.parse(url)
   ext = [".", uri.path.split(/\./).last].join("")
@@ -44,7 +55,7 @@ def save_to_tempfile(url)
 end
 
 def filter_images(list)
-  list.reject { |l| l =~ /.svg$/ }
+  list.reject { |l| l =~ /.svg$/ || ! valid_url?(l) }
 end
 
 
