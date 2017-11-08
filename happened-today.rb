@@ -12,6 +12,8 @@ require 'wikipedia'
 require "open-uri"
 require 'tempfile'
 
+TWEET_SIZE=140
+twitter_url_length = 23
 
 #debug_mode
 verbose
@@ -84,7 +86,7 @@ end
 data = JSON.parse(data)
 tmp = data['data']['Events'].sort_by { rand }.reject { |e| 
   twt = "#{e["year"]}: #{e["text"]}"
-  twt.size > 140 or twt.size < 30
+  twt.size > TWEET_SIZE || twt.size < 30
 }
 
 if bot.config[:date_index] != day.to_i
@@ -104,9 +106,8 @@ if tmp.size > bot.config[:event_index]
   links = e["links"].sort_by { |l| -l["title"].length }
   puts links.inspect
 
-  twitter_url_length = 22
   links.each { |l|
-    txt = "#{txt} #{l["link"]}" if txt.length < 140 - twitter_url_length - 1
+    txt = "#{txt} #{l["link"]}" if txt.length < TWEET_SIZE - twitter_url_length - 1
 
     if media.nil?
       page = Wikipedia.find(l["title"])
